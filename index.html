@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChessAcademy - Domina el Arte del Ajedrez</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #1a1a1a;
+            --color-secondary: #f5f1e8;
+            --color-accent: #d4a574;
+            --color-accent-dark: #8b6f47;
+            --color-success: #2ecc71;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            overflow-x: hidden;
+        }
+
+        /* ============ HEADER ============ */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(26, 26, 26, 0.95) 100%);
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--color-accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .chess-icon {
+            font-size: 2rem;
+        }
+
+        nav a {
+            color: var(--color-secondary);
+            text-decoration: none;
+            margin-left: 2.5rem;
+            font-weight: 500;
+            transition: color var(--transition);
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-accent);
+            transition: width var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* ============ HERO ============ */
+        .hero {
+            margin-top: 80px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--color-primary) 0%, #2d2d2d 100%);
+            color: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            font-weight: 800;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .hero-text h1 .accent {
+            color: var(--color-accent);
+            background: linear-gradient(135deg, var(--color-accent) 0%, #f5d87e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: rgba(245, 241, 232, 0.8);
+            animation: slideInLeft 0.8s ease-out 0.1s both;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--color-accent) 0%, #f5d87e 100%);
+            color: var(--color-primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all var(--transition);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3);
+            animation: slideInLeft 0.8s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: left 0.4s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 165, 116, 0.4);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .hero-visual {
+            animation: slideInRight 0.8s ease-out;
+            position: relative;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .chess-board {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            background: #fff;
+            border: 3px solid var(--color-accent);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .square {
+            aspect-ratio: 1;
+            animation: appearBoard 0.6s ease-out forwards;
+        }
+
+        @keyframes appearBoard {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .square.light {
+            background-color: #f5f1e8;
+        }
+
+        .square.dark {
+            background-color: #8b6f47;
+        }
+
+        .square.light.active {
+            background-color: var(--color-accent);
+        }
+
+        /* ============ SECCIONES ============ */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: var(--color-primary);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent) 0%, #f5d87e 100%);
+            border-radius: 2px;
+        }
+
+        /* ============ INTRODUCCIÓN ============ */
+        #introduccion {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, #ede9e0 100%);
+        }
+
+        .intro-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-text h3 {
+            font-size: 1.8rem;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+
+        .intro-text p {
+            color: rgba(26, 26, 26, 0.7);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .intro-image {
+            background: linear-gradient(135deg, var(--color-accent) 0%, #f5d87e 100%);
+            height: 400px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            box-shadow: 0 15px 40px rgba(212, 165, 116, 0.2);
+            animation: scaleIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ============ TÉCNICAS ============ */
+        #tecnicas {
+            background: var(--color-secondary);
+        }
+
+        .tecnicas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .tech-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all var(--transition);
+            border-top: 4px solid var(--color-accent);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .tech-card:nth-child(1) { animation-delay: 0.1s; }
+        .tech-card:nth-child(2) { animation-delay: 0.2s; }
+        .tech-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .tech-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(212, 165, 116, 0.2);
+        }
+
+        .tech-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-card h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .tech-card p {
+            color: rgba(26, 26, 26, 0.7);
+            line-height: 1.6;
+        }
+
+        /* ============ EXPERIENCIA ============ */
+        #experiencia {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #2d2d2d 100%);
+            color: var(--color-secondary);
+        }
+
+        #experiencia h2 {
+            color: var(--color-secondary);
+        }
+
+        #experiencia h2::after {
+            background: var(--color-accent);
+        }
+
+        .experience-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .timeline-item {
+            background: rgba(245, 241, 232, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--color-accent);
+            transition: all var(--transition);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+
+        .timeline-item:hover {
+            background: rgba(245, 241, 232, 0.1);
+            transform: translateX(10px);
+        }
+
+        .timeline-item .years {
+            font-size: 2rem;
+            color: var(--color-accent);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item .title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .timeline-item p {
+            color: rgba(245, 241, 232, 0.8);
+            line-height: 1.6;
+        }
+
+        /* ============ PROGRESO ============ */
+        #progreso {
+            background: var(--color-secondary);
+        }
+
+        .progress-content {
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .progress-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .stat {
+            animation: fadeInLeft 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat:nth-child(1) { animation-delay: 0.1s; }
+        .stat:nth-child(2) { animation-delay: 0.2s; }
+        .stat:nth-child(3) { animation-delay: 0.3s; }
+
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .stat-label span:first-child {
+            color: var(--color-primary);
+        }
+
+        .stat-label span:last-child {
+            color: var(--color-accent);
+            font-size: 1.3rem;
+        }
+
+        .progress-bar {
+            background: rgba(26, 26, 26, 0.1);
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent) 0%, #f5d87e 100%);
+            border-radius: 10px;
+            animation: fillProgress 1.5s ease-out forwards;
+            width: 0;
+        }
+
+        @keyframes fillProgress {
+            to {
+                width: var(--width);
+            }
+        }
+
+        .progress-visual {
+            background: linear-gradient(135deg, var(--color-accent) 0%, #f5d87e 100%);
+            height: 300px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: 0 15px 40px rgba(212, 165, 116, 0.2);
+            animation: scaleIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ============ APRENDIZAJE ============ */
+        #aprendizaje {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #2d2d2d 100%);
+            color: var(--color-secondary);
+        }
+
+        #aprendizaje h2 {
+            color: var(--color-secondary);
+        }
+
+        #aprendizaje h2::after {
+            background: var(--color-accent);
+        }
+
+        .learning-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .learning-card {
+            background: rgba(245, 241, 232, 0.05);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            transition: all var(--transition);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .learning-card:nth-child(1) { animation-delay: 0.1s; }
+        .learning-card:nth-child(2) { animation-delay: 0.2s; }
+        .learning-card:nth-child(3) { animation-delay: 0.3s; }
+        .learning-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .learning-card:hover {
+            background: rgba(212, 165, 116, 0.1);
+            border-color: var(--color-accent);
+            transform: translateY(-8px);
+        }
+
+        .learning-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .learning-card h3 {
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .learning-card p {
+            color: rgba(245, 241, 232, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .learning-card ul {
+            list-style: none;
+            color: rgba(245, 241, 232, 0.7);
+            line-height: 2;
+        }
+
+        .learning-card ul li::before {
+            content: '✓ ';
+            color: var(--color-success);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        /* ============ FOOTER ============ */
+        footer {
+            background: var(--color-primary);
+            color: var(--color-secondary);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 2px solid var(--color-accent);
+        }
+
+        footer h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--color-accent);
+        }
+
+        footer p {
+            margin-bottom: 2rem;
+            color: rgba(245, 241, 232, 0.8);
+        }
+
+        .footer-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-buttons button {
+            padding: 0.8rem 2rem;
+            background: var(--color-accent);
+            color: var(--color-primary);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 1rem;
+        }
+
+        .footer-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 165, 116, 0.3);
+        }
+
+        .footer-buttons button.secondary {
+            background: transparent;
+            border: 2px solid var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(212, 165, 116, 0.2);
+            color: rgba(245, 241, 232, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+                margin-top: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-text p {
+                font-size: 1rem;
+            }
+
+            .intro-content,
+            .progress-content {
+                grid-template-columns: 1fr;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .tecnicas-grid,
+            .learning-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .experience-timeline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="chess-icon">♛</span>
+                ChessAcademy
+            </div>
+            <nav>
+                <a href="#introduccion">Inicio</a>
+                <a href="#tecnicas">Técnicas</a>
+                <a href="#experiencia">Experiencia</a>
+                <a href="#progreso">Progreso</a>
+                <a href="#aprendizaje">Aprendizaje</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Domina el <span class="accent">Juego del Rey</span></h1>
+                <p>Aprende ajedrez desde cero hasta nivel avanzado. Con nuestra metodología probada, miles de estudiantes han mejorado su juego significativamente en solo meses.</p>
+                <button class="cta-button">Comienza Ahora</button>
+            </div>
+            <div class="hero-visual">
+                <div class="chess-board">
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTRODUCCIÓN -->
+    <section id="introduccion">
+        <h2>¿Por qué Aprender Ajedrez?</h2>
+        <div class="intro-content">
+            <div class="intro-text">
+                <h3>El Ajedrez es un Arte y una Ciencia</h3>
+                <p>El ajedrez no es solo un juego, es un viaje hacia el desarrollo personal. Mejora tu pensamiento estratégico, concentración y toma de decisiones.</p>
+                <p>Ya seas un principiante absoluto o alguien con experiencia, nuestros cursos te llevarán al siguiente nivel con métodos probados y entrenadores expertos.</p>
+                <p>Únete a miles de estudiantes que han transformado su forma de pensar a través del ajedrez.</p>
+            </div>
+            <div class="intro-image">♛</div>
+        </div>
+    </section>
+
+    <!-- TÉCNICAS -->
+    <section id="tecnicas">
+        <h2>Técnicas Fundamentales</h2>
+        <div class="tecnicas-grid">
+            <div class="tech-card">
+                <div class="icon">🎯</div>
+                <h3>Control del Centro</h3>
+                <p>Aprende a dominar las casillas centrales del tablero. Esta es la base de cualquier buen juego y te dará una ventaja estratégica inmediata.</p>
+            </div>
+            <div class="tech-card">
+                <div class="icon">♟️</div>
+                <h3>Estructura de Peones</h3>
+                <p>Entiende la importancia de la estructura y coordinación de tus peones. Los peones son el alma del ajedrez y determinan el carácter de la posición.</p>
+            </div>
+            <div class="tech-card">
+                <div class="icon">⚔️</div>
+                <h3>Tácticas Ganadoras</h3>
+                <p>Domina los patrones tácticos básicos: clavadas, horquillas, descubiertos y sacrificios. Reconoce estas oportunidades en tus partidas.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCIA -->
+    <section id="experiencia">
+        <h2>Años de Experiencia Combinada</h2>
+        <div class="experience-timeline">
+            <div class="timeline-item">
+                <div class="years">200+</div>
+                <div class="title">Años de Experiencia</div>
+                <p>Nuestro equipo de maestros tiene más de 200 años combinados de experiencia en ajedrez de competencia.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="years">50K+</div>
+                <div class="title">Estudiantes Formados</div>
+                <p>Más de 50,000 estudiantes alrededor del mundo han mejorado sus habilidades con nuestros programas.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="years">15+</div>
+                <div class="title">Años de Enseñanza</div>
+                <p>Con más de 15 años enseñando ajedrez, hemos perfeccionado nuestras metodologías de aprendizaje.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRESO -->
+    <section id="progreso">
+        <h2>Tu Progreso Garantizado</h2>
+        <div class="progress-content">
+            <div class="progress-stats">
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>Movimientos Básicos</span>
+                        <span>100%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="--width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>Estrategia y Táctica</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="--width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>Dominio del Juego Final</span>
+                        <span>72%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="--width: 72%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-visual">
+                📈
+            </div>
+        </div>
+    </section>
+
+    <!-- APRENDIZAJE -->
+    <section id="aprendizaje">
+        <h2>Módulos de Aprendizaje</h2>
+        <div class="learning-grid">
+            <div class="learning-card">
+                <div class="icon">🏛️</div>
+                <h3>Nivel Principiante</h3>
+                <p>Perfecto para quienes inician desde cero:</p>
+                <ul>
+                    <li>Movimiento de piezas</li>
+                    <li>Apertura básica</li>
+                    <li>Juego final elemental</li>
+                    <li>Tu primer torneo</li>
+                </ul>
+            </div>
+            <div class="learning-card">
+                <div class="icon">🌟</div>
+                <h3>Nivel Intermedio</h3>
+                <p>Para quienes ya conocen lo básico:</p>
+                <ul>
+                    <li>Teoría de aperturas</li>
+                    <li>Tácticas avanzadas</li>
+                    <li>Análisis de partidas</li>
+                    <li>Estrategia posicional</li>
+                </ul>
+            </div>
+            <div class="learning-card">
+                <div class="icon">👑</div>
+                <h3>Nivel Avanzado</h3>
+                <p>Para jugadores experimentados:</p>
+                <ul>
+                    <li>Preparación de aperturas</li>
+                    <li>Estudios de finales</li>
+                    <li>Psicología del juego</li>
+                    <li>Competencias internacionales</li>
+                </ul>
+            </div>
+            <div class="learning-card">
+                <div class="icon">🎓</div>
+                <h3>Certificación</h3>
+                <p>Obtén reconocimiento oficial:</p>
+                <ul>
+                    <li>Diplomas por nivel</li>
+                    <li>Credenciales verificables</li>
+                    <li>Acceso a torneos</li>
+                    <li>Red de maestros</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <h3>🎯 ¿Listo para tu Transformación?</h3>
+        <p>Únete a nuestra comunidad de ajedrecistas apasionados y llevar tu juego al siguiente nivel.</p>
+        <div class="footer-buttons">
+            <button onclick="alert('¡Gracias por tu interés! Pronto se abrirán las inscripciones.')">Inscribirse Ahora</button>
+            <button class="secondary" onclick="alert('Descargando información... En breve recibirás nuestro catálogo completo.')">Descargar Catálogo</button>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ChessAcademy. Todos los derechos reservados. | Enseñando la pasión del ajedrez desde 2009</p>
+        </div>
+    </footer>
+
+    <script>
+        // Animación del tablero al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach((square, index) => {
+                if ((index % 2 === 0 && Math.floor(index / 8) % 2 === 0) ||
+                    (index % 2 !== 0 && Math.floor(index / 8) % 2 !== 0)) {
+                    if (Math.random() > 0.7) {
+                        square.classList.add('active');
+                    }
+                }
+            });
+
+            // Scroll suave y activación de animaciones
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        // Interactividad de botones
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('cta-button')) {
+                e.preventDefault();
+                document.querySelector('#tecnicas').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
