@@ -1,26 +1,17 @@
-/**
- * ChessAcademy - Script Principal
- * Integrado con FastAPI Backend (Versión CRUD Simple)
- */
 
-// Si levantas el backend localmente, responderá en este puerto
 const BACKEND_URL = 'http://localhost:8000'; 
 const API_BASE = `${BACKEND_URL}/api/v1`;
 
 document.addEventListener('DOMContentLoaded', () => {
     inicializarTablero();
     inicializarObservador();
-    cargarCursos(); // Llama a la API apenas carga la página
+    cargarCursos(); 
 });
 
-// ========================================
-// CARGA DINÁMICA DE CURSOS (API REST - GET)
-// ========================================
 async function cargarCursos() {
     const contenedor = document.getElementById('contenedor-cursos');
     
     try {
-        // Hace la petición GET a tu backend en Python
         const respuesta = await fetch(`${API_BASE}/cursos`);
         if (!respuesta.ok) throw new Error('Error al conectar con el servidor');
         
@@ -57,9 +48,7 @@ function renderizarCursos(cursos) {
     });
 }
 
-// ========================================
-// ANIMACIONES VISUALES ORIGINALES
-// ========================================
+
 function inicializarTablero() {
     const squares = document.querySelectorAll('.square');
     squares.forEach((square, index) => {
