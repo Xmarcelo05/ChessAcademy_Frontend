@@ -1,58 +1,222 @@
 /**
  * ChessAcademy - Script Principal
- * Contiene toda la funcionalidad interactiva de la landing page
+ * Integrado con AWS App Runner (FastAPI) Backend
  */
 
 // ========================================
-// INICIALIZACIÓN AL CARGAR LA PÁGINA
+// CONFIGURACIÓN DEL BACKEND
 // ========================================
+// IMPORTANTE: Cambia estas URLs cuando despliegues en AWS
+const BACKEND_URL = 'http://localhost:8000'; 
+const API_BASE = `${BACKEND_URL}/api/v1`;
+// Generamos un ID único para la conexión WebSocket de este cliente
+const CLIENT_ID = Math.random().toString(36).substring(2, 15);
+const WS_URL = `ws://localhost:8000/ws/${CLIENT_ID}`; 
 
-document.addEventListener('DOMContentLoaded', function() {
+let websocket = null;
+
+// ========================================
+// INICIALIZACIÓN
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
     inicializarTablero();
     inicializarObservador();
-    inicializarEventos();
+    cargarCursos();
+    conectarWebSocket();
 });
 
+// ========================================
+// 1. CARGA DINÁMICA DE CURSOS (API REST)
+// ========================================
+async function cargarCursos() {
+    const contenedor = document.getElementById('contenedor-cursos');
+    
+    try {
+        const respuesta = await fetch(`${API_BASE}/cursos`);
+        if (!respuesta.ok) throw new Error('Error al conectar con el servidor');
+        
+        const cursos = await respuesta.json();
+        renderizarCursos(cursos);
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        contenedor.innerHTML = `
+            <div style="text-align: center; width: 100%; color: var(--color-error); grid-column: 1 / -1;">
+                <p>⚠️ No se pudieron cargar los cursos en este momento. Por favor, intenta más tarde.</p>
+                <p style="font-size: 0.8rem; margin-top: 1rem;">(Verifica que el backend de FastAPI esté corriendo en ${BACKEND_URL})</p>
+            </div>
+        `;
+    }
+}
+
+function renderizarCursos(cursos) {
+    const contenedor = document.getElementById('contenedor-cursos');
+    contenedor.innerHTML = ''; // Limpiar el mensaje de carga
+
+    cursos.forEach(curso => {
+        // Determinar estilo del badge según el nivel o si está lleno
+        let badgeClass = curso.nivel;
+        let estadoBoton = 'disponible';
+        let textoBoton = 'Inscribirse Ahora';
+        
+        if (curso.cupos_disponibles === 0) {
+            badgeClass = 'lleno';
+            estadoBoton = 'completo';
+            textoBoton = 'Curso Lleno';
+        }
+
+        const card = document.createElement('div');
+        card.className = 'learning-card';
+        card.innerHTML = `
+            <div>
+                <span class="badge ${badgeClass}">${curso.nivel === 'principiante' && curso.cupos_disponibles === 0 ? 'Lleno' : curso.nivel}</span>
+                <h3>${curso.nombre}</h3>
+                <p class="instructor">👨‍🏫 ${curso.instructor || 'Instructor Experto'}</p>
+                <p class="precio">$${curso.precio || '0.00'}</p>
+                
+                <div class="cupos-counter" id="cupos-${curso.id}">
+                    Cupos disponibles: <span>${curso.cupos_disponibles}/${curso.cupos_totales}</span>
+                </div>
+            </div>
+            <button class="${estadoBoton}" 
+                    ${estadoBoton === 'completo' ? 'disabled' : `onclick="abrirModal('${curso.id}', '${curso.nombre}')"`}>
+                ${textoBoton}
+            </button>
+        `;
+        contenedor.appendChild(card);
+    });
+}
 
 // ========================================
-// FUNCIONES DE TABLERO DE AJEDREZ
+// 2. LÓGICA DEL FORMULARIO Y MODAL
 // ========================================
+function abrirModal(cursoId, nombreCurso) {
+    document.getElementById('curso_id').value = cursoId;
+    document.getElementById('modal-titulo-curso').innerText = `Inscripción: ${nombreCurso}`;
+    document.getElementById('modal-inscripcion').classList.add('open');
+    limpiarMensajes();
+}
 
-/**
- * Inicializa el tablero con animaciones y efectos visuales
- */
+function cerrarModal() {
+    document.getElementById('modal-inscripcion').classList.remove('open');
+    document.getElementById('form-inscripcion').reset();
+    limpiarMensajes();
+}
+
+function limpiarMensajes() {
+    const msgDiv = document.getElementById('mensaje-formulario');
+    msgDiv.className = 'mensaje-form';
+    msgDiv.innerText = '';
+}
+
+async function procesarInscripcion(event) {
+    event.preventDefault(); // Evitar que la página se recargue
+    
+    const botonSubmit = document.getElementById('btn-submit');
+    const msgDiv = document.getElementById('mensaje-formulario');
+    
+    // Preparar el Payload según el esquema del Backend (Pydantic)
+    const payload = {
+        curso_id: document.getElementById('curso_id').value,
+        fecha_inicio_preferida: document.getElementById('fecha_inicio').value,
+        usuario: {
+            nombre: document.getElementById('nombre').value,
+            email: document.getElementById('email').value,
+            telefono: document.getElementById('telefono').value
+        }
+    };
+
+    try {
+        botonSubmit.disabled = true;
+        botonSubmit.innerText = 'Procesando...';
+        limpiarMensajes();
+
+        const respuesta = await fetch(`${API_BASE}/inscripciones`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await respuesta.json();
+
+        if (respuesta.ok) {
+            msgDiv.className = 'mensaje-form success';
+            msgDiv.innerText = '¡Inscripción exitosa! Te hemos enviado un correo con los detalles.';
+            document.getElementById('form-inscripcion').reset();
+            
+            // Cerrar el modal automáticamente después de 3 segundos
+            setTimeout(cerrarModal, 3000);
+            
+            // Refrescar los cursos para actualizar los botones si se llenó
+            cargarCursos();
+        } else {
+            // Manejar errores de validación del backend (Pydantic)
+            msgDiv.className = 'mensaje-form error';
+            msgDiv.innerText = data.detail || 'Hubo un error al procesar tu inscripción. Revisa tus datos.';
+        }
+    } catch (error) {
+        console.error('Error procesando inscripción:', error);
+        msgDiv.className = 'mensaje-form error';
+        msgDiv.innerText = 'Error de conexión con el servidor. Intenta de nuevo.';
+    } finally {
+        botonSubmit.disabled = false;
+        botonSubmit.innerText = 'Confirmar Inscripción';
+    }
+}
+
+// ========================================
+// 3. TIEMPO REAL CON WEBSOCKETS
+// ========================================
+function conectarWebSocket() {
+    websocket = new WebSocket(WS_URL);
+
+    websocket.onopen = () => {
+        console.log('🟢 Conectado al servidor WebSocket de ChessAcademy');
+        // Opcional: Suscribirse para recibir actualizaciones
+        websocket.send(JSON.stringify({ tipo: "obtener_cursos" }));
+    };
+
+    websocket.onmessage = (event) => {
+        const datos = JSON.parse(event.data);
+        console.log('📡 Mensaje WS recibido:', datos);
+
+        // Si el backend avisa que alguien se inscribió o los cupos cambiaron
+        if (datos.tipo === 'inscripcion_procesada' || datos.tipo === 'curso_actualizado') {
+            // Refrescamos toda la lista para mantener la UI sincronizada perfectamente
+            // Podríamos actualizar solo el DOM específico, pero cargarCursos es más seguro
+            console.log('Actualizando cupos en la interfaz...');
+            cargarCursos();
+        }
+    };
+
+    websocket.onclose = () => {
+        console.log('🔴 Desconectado del WebSocket. Reintentando en 5s...');
+        setTimeout(conectarWebSocket, 5000);
+    };
+
+    websocket.onerror = (error) => {
+        console.error('Error en WebSocket:', error);
+    };
+}
+
+// ========================================
+// 4. ANIMACIONES Y UI (CÓDIGO ORIGINAL)
+// ========================================
 function inicializarTablero() {
     const squares = document.querySelectorAll('.square');
-    
     squares.forEach((square, index) => {
-        // Determina si la casilla debe ser activada
         const esNegra = (index % 2 === 0 && Math.floor(index / 8) % 2 === 0) ||
                         (index % 2 !== 0 && Math.floor(index / 8) % 2 !== 0);
-        
-        // Activar algunas casillas aleatoriamente para efecto visual
         if (esNegra && Math.random() > 0.7) {
             square.classList.add('active');
         }
-        
-        // Agregar delay a la animación de aparición
         square.style.animationDelay = `${index * 0.02}s`;
     });
 }
 
-
-// ========================================
-// OBSERVADOR DE INTERSECCIÓN
-// ========================================
-
-/**
- * Inicializa el observador para animaciones de scroll
- */
 function inicializarObservador() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -62,260 +226,12 @@ function inicializarObservador() {
         });
     }, observerOptions);
 
-    // Observar todas las secciones
     document.querySelectorAll('section').forEach(section => {
         observer.observe(section);
     });
 }
 
-
-// ========================================
-// EVENTOS E INTERACTIVIDAD
-// ========================================
-
-/**
- * Inicializa todos los eventos de la página
- */
-function inicializarEventos() {
-    // Evento del botón CTA principal
-    const ctaButton = document.querySelector('.cta-button');
-    if (ctaButton) {
-        ctaButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            const seccionTecnicas = document.querySelector('#tecnicas');
-            if (seccionTecnicas) {
-                seccionTecnicas.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-    }
-
-    // Animación de barras de progreso al entrar en viewport
-    animarBarrasProgreso();
-
-    // Efectos hover en tarjetas
-    agregarEfectosHover();
-}
-
-
-/**
- * Anima las barras de progreso cuando entran en vista
- */
-function animarBarrasProgreso() {
-    const stats = document.querySelectorAll('.stat');
-    
-    const observerOptions = {
-        threshold: 0.5
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const progresoBarra = entry.target.querySelector('.progress-fill');
-                if (progresoBarra) {
-                    // Forzar reflow para reiniciar la animación
-                    progresoBarra.style.animation = 'none';
-                    setTimeout(() => {
-                        progresoBarra.style.animation = '';
-                    }, 10);
-                }
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    stats.forEach(stat => observer.observe(stat));
-}
-
-
-/**
- * Agrega efectos hover interactivos a las tarjetas
- */
-function agregarEfectosHover() {
-    const cards = document.querySelectorAll('.tech-card, .learning-card, .timeline-item');
-    
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-        });
-
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-}
-
-
-// ========================================
-// FUNCIONES DE UTILIDAD
-// ========================================
-
-/**
- * Muestra un mensaje emergente personalizado
- * @param {string} mensaje - El mensaje a mostrar
- */
-function mostrarMensaje(mensaje) {
-    // Opción 1: Alert nativo
-    alert(mensaje);
-
-    // Opción 2: Descomenta para usar una notificación personalizada
-    // mostrarNotificacionPersonalizada(mensaje);
-}
-
-
-/**
- * Muestra una notificación personalizada (opcional)
- * @param {string} mensaje - El mensaje a mostrar
- */
-function mostrarNotificacionPersonalizada(mensaje) {
-    const notificacion = document.createElement('div');
-    notificacion.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #d4a574 0%, #f5d87e 100%);
-        color: #1a1a1a;
-        padding: 1rem 2rem;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        z-index: 9999;
-        animation: slideInRight 0.5s ease-out;
-        font-weight: 600;
-    `;
-    notificacion.textContent = mensaje;
-    document.body.appendChild(notificacion);
-
-    // Remover notificación después de 3 segundos
-    setTimeout(() => {
-        notificacion.style.animation = 'slideOut 0.5s ease-out';
-        setTimeout(() => {
-            notificacion.remove();
-        }, 500);
-    }, 3000);
-}
-
-
-/**
- * Navega suavemente a una sección
- * @param {string} sectionId - El ID de la sección
- */
 function navegarASeccion(sectionId) {
     const seccion = document.querySelector(`#${sectionId}`);
-    if (seccion) {
-        seccion.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (seccion) seccion.scrollIntoView({ behavior: 'smooth' });
 }
-
-
-/**
- * Obtiene el color de la variable CSS
- * @param {string} nombreVariable - Nombre de la variable CSS
- * @returns {string} - Valor de la variable
- */
-function obtenerColorCSS(nombreVariable) {
-    return getComputedStyle(document.documentElement)
-        .getPropertyValue(`--${nombreVariable}`)
-        .trim();
-}
-
-
-// ========================================
-// FUNCIONES AVANZADAS (OPCIONAL)
-// ========================================
-
-/**
- * Habilita modo oscuro/claro
- */
-function cambiarTema() {
-    const html = document.documentElement;
-    const tema = localStorage.getItem('tema') || 'claro';
-    
-    if (tema === 'claro') {
-        html.style.filter = 'invert(1) hue-rotate(180deg)';
-        localStorage.setItem('tema', 'oscuro');
-    } else {
-        html.style.filter = 'none';
-        localStorage.setItem('tema', 'claro');
-    }
-}
-
-
-/**
- * Rastrea eventos de usuario para analytics (opcional)
- * @param {string} nombreEvento - Nombre del evento
- * @param {object} datos - Datos adicionales del evento
- */
-function rastrearEvento(nombreEvento, datos = {}) {
-    console.log(`Evento: ${nombreEvento}`, datos);
-    
-    // Aquí puedes integrar con Google Analytics u otra herramienta
-    // if (typeof gtag === 'function') {
-    //     gtag('event', nombreEvento, datos);
-    // }
-}
-
-
-/**
- * Valida un formulario de contacto (si lo agregamos)
- * @param {object} formData - Datos del formulario
- * @returns {boolean} - True si el formulario es válido
- */
-function validarFormulario(formData) {
-    if (!formData.nombre || formData.nombre.trim() === '') {
-        console.error('El nombre es requerido');
-        return false;
-    }
-
-    if (!formData.email || !validarEmail(formData.email)) {
-        console.error('El email es inválido');
-        return false;
-    }
-
-    return true;
-}
-
-
-/**
- * Valida un formato de email
- * @param {string} email - Email a validar
- * @returns {boolean} - True si es un email válido
- */
-function validarEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-
-/**
- * Desplaza la página suavemente hacia arriba
- */
-function irAlInicio() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-
-/**
- * Copia texto al portapapeles
- * @param {string} texto - Texto a copiar
- */
-function copiarAlPortapapeles(texto) {
-    navigator.clipboard.writeText(texto).then(() => {
-        mostrarMensaje('¡Copiado al portapapeles!');
-    }).catch(err => {
-        console.error('Error al copiar:', err);
-    });
-}
-
-
-// ========================================
-// EXPORTAR FUNCIONES (para uso en HTML)
-// ========================================
-
-// Hacer funciones disponibles globalmente si es necesario
-window.mostrarMensaje = mostrarMensaje;
-window.navegarASeccion = navegarASeccion;
-window.cambiarTema = cambiarTema;
-window.irAlInicio = irAlInicio;
-window.copiarAlPortapapeles = copiarAlPortapapeles;

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- HEADER / NAVEGACIÓN -->
     <header>
         <div class="header-content">
             <div class="logo">
@@ -18,107 +17,33 @@
                 <a href="#introduccion">Inicio</a>
                 <a href="#tecnicas">Técnicas</a>
                 <a href="#experiencia">Experiencia</a>
-                <a href="#progreso">Progreso</a>
-                <a href="#aprendizaje">Aprendizaje</a>
+                <a href="#cursos">Cursos Disponibles</a>
             </nav>
         </div>
     </header>
 
-    <!-- SECCIÓN HERO -->
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
                 <h1>Domina el <span class="accent">Juego del Rey</span></h1>
                 <p>Aprende ajedrez desde cero hasta nivel avanzado. Con nuestra metodología probada, miles de estudiantes han mejorado su juego significativamente en solo meses.</p>
-                <button class="cta-button">Comienza Ahora</button>
+                <button class="cta-button" onclick="navegarASeccion('cursos')">Ver Cursos</button>
             </div>
             <div class="hero-visual">
                 <div class="chess-board">
-                    <!-- Fila 1 -->
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    
-                    <!-- Fila 2 -->
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-
-                    <!-- Fila 3 -->
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-
-                    <!-- Fila 4 -->
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-
-                    <!-- Fila 5 -->
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-
-                    <!-- Fila 6 -->
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-
-                    <!-- Fila 7 -->
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-
-                    <!-- Fila 8 -->
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
-                    <div class="square dark"></div>
-                    <div class="square light"></div>
+                    <div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div>
+                    <div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div>
+                    <div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div>
+                    <div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div>
+                    <div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div>
+                    <div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div>
+                    <div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div>
+                    <div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div><div class="square dark"></div><div class="square light"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN INTRODUCCIÓN -->
     <section id="introduccion">
         <h2>¿Por qué Aprender Ajedrez?</h2>
         <div class="intro-content">
@@ -126,160 +51,83 @@
                 <h3>El Ajedrez es un Arte y una Ciencia</h3>
                 <p>El ajedrez no es solo un juego, es un viaje hacia el desarrollo personal. Mejora tu pensamiento estratégico, concentración y toma de decisiones.</p>
                 <p>Ya seas un principiante absoluto o alguien con experiencia, nuestros cursos te llevarán al siguiente nivel con métodos probados y entrenadores expertos.</p>
-                <p>Únete a miles de estudiantes que han transformado su forma de pensar a través del ajedrez.</p>
             </div>
             <div class="intro-image">♛</div>
         </div>
     </section>
 
-    <!-- SECCIÓN TÉCNICAS -->
     <section id="tecnicas">
         <h2>Técnicas Fundamentales</h2>
         <div class="tecnicas-grid">
             <div class="tech-card">
                 <div class="icon">🎯</div>
                 <h3>Control del Centro</h3>
-                <p>Aprende a dominar las casillas centrales del tablero. Esta es la base de cualquier buen juego y te dará una ventaja estratégica inmediata.</p>
+                <p>Aprende a dominar las casillas centrales del tablero.</p>
             </div>
             <div class="tech-card">
                 <div class="icon">♟️</div>
                 <h3>Estructura de Peones</h3>
-                <p>Entiende la importancia de la estructura y coordinación de tus peones. Los peones son el alma del ajedrez y determinan el carácter de la posición.</p>
+                <p>Entiende la importancia de la estructura y coordinación de tus peones.</p>
             </div>
             <div class="tech-card">
                 <div class="icon">⚔️</div>
                 <h3>Tácticas Ganadoras</h3>
-                <p>Domina los patrones tácticos básicos: clavadas, horquillas, descubiertos y sacrificios. Reconoce estas oportunidades en tus partidas.</p>
+                <p>Domina los patrones tácticos básicos y avanzados.</p>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN EXPERIENCIA -->
-    <section id="experiencia">
-        <h2>Años de Experiencia Combinada</h2>
-        <div class="experience-timeline">
-            <div class="timeline-item">
-                <div class="years">200+</div>
-                <div class="title">Años de Experiencia</div>
-                <p>Nuestro equipo de maestros tiene más de 200 años combinados de experiencia en ajedrez de competencia.</p>
-            </div>
-            <div class="timeline-item">
-                <div class="years">50K+</div>
-                <div class="title">Estudiantes Formados</div>
-                <p>Más de 50,000 estudiantes alrededor del mundo han mejorado sus habilidades con nuestros programas.</p>
-            </div>
-            <div class="timeline-item">
-                <div class="years">15+</div>
-                <div class="title">Años de Enseñanza</div>
-                <p>Con más de 15 años enseñando ajedrez, hemos perfeccionado nuestras metodologías de aprendizaje.</p>
+    <section id="cursos">
+        <h2>Cursos Disponibles</h2>
+        <div class="learning-grid" id="contenedor-cursos">
+            <div style="text-align: center; width: 100%; color: var(--color-accent);">
+                <p>Cargando cursos desde el servidor...</p>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN PROGRESO -->
-    <section id="progreso">
-        <h2>Tu Progreso Garantizado</h2>
-        <div class="progress-content">
-            <div class="progress-stats">
-                <div class="stat">
-                    <div class="stat-label">
-                        <span>Movimientos Básicos</span>
-                        <span>100%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="--width: 100%;"></div>
-                    </div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">
-                        <span>Estrategia y Táctica</span>
-                        <span>85%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="--width: 85%;"></div>
-                    </div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">
-                        <span>Dominio del Juego Final</span>
-                        <span>72%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="--width: 72%;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="progress-visual">
-                📈
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN APRENDIZAJE -->
-    <section id="aprendizaje">
-        <h2>Módulos de Aprendizaje</h2>
-        <div class="learning-grid">
-            <div class="learning-card">
-                <div class="icon">🏛️</div>
-                <h3>Nivel Principiante</h3>
-                <p>Perfecto para quienes inician desde cero:</p>
-                <ul>
-                    <li>Movimiento de piezas</li>
-                    <li>Apertura básica</li>
-                    <li>Juego final elemental</li>
-                    <li>Tu primer torneo</li>
-                </ul>
-            </div>
-            <div class="learning-card">
-                <div class="icon">🌟</div>
-                <h3>Nivel Intermedio</h3>
-                <p>Para quienes ya conocen lo básico:</p>
-                <ul>
-                    <li>Teoría de aperturas</li>
-                    <li>Tácticas avanzadas</li>
-                    <li>Análisis de partidas</li>
-                    <li>Estrategia posicional</li>
-                </ul>
-            </div>
-            <div class="learning-card">
-                <div class="icon">👑</div>
-                <h3>Nivel Avanzado</h3>
-                <p>Para jugadores experimentados:</p>
-                <ul>
-                    <li>Preparación de aperturas</li>
-                    <li>Estudios de finales</li>
-                    <li>Psicología del juego</li>
-                    <li>Competencias internacionales</li>
-                </ul>
-            </div>
-            <div class="learning-card">
-                <div class="icon">🎓</div>
-                <h3>Certificación</h3>
-                <p>Obtén reconocimiento oficial:</p>
-                <ul>
-                    <li>Diplomas por nivel</li>
-                    <li>Credenciales verificables</li>
-                    <li>Acceso a torneos</li>
-                    <li>Red de maestros</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
     <footer>
         <h3>🎯 ¿Listo para tu Transformación?</h3>
-        <p>Únete a nuestra comunidad de ajedrecistas apasionados y llevar tu juego al siguiente nivel.</p>
-        <div class="footer-buttons">
-            <button onclick="mostrarMensaje('¡Gracias por tu interés! Pronto se abrirán las inscripciones.')">Inscribirse Ahora</button>
-            <button class="secondary" onclick="mostrarMensaje('Descargando información... En breve recibirás nuestro catálogo completo.')">Descargar Catálogo</button>
-        </div>
+        <p>Únete a nuestra comunidad de ajedrecistas apasionados.</p>
         <div class="footer-bottom">
-            <p>&copy; 2024 ChessAcademy. Todos los derechos reservados. | Enseñando la pasión del ajedrez desde 2009</p>
+            <p>&copy; 2024 ChessAcademy. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <!-- SCRIPT -->
+    <div id="modal-inscripcion" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="cerrarModal()" aria-label="Cerrar" type="button">&times;</button>
+            <h3 id="modal-titulo-curso">Inscripción al Curso</h3>
+            <form id="form-inscripcion" onsubmit="procesarInscripcion(event)">
+                <input type="hidden" id="curso_id" name="curso_id">
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Ej. Magnus Carlsen">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" required placeholder="magnus@ejemplo.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" required placeholder="+593 99 999 9999">
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha de inicio preferida</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                </div>
+
+                <div id="mensaje-formulario" class="mensaje-form"></div>
+
+                <button type="submit" id="btn-submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Confirmar Inscripción</button>
+            </form>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
